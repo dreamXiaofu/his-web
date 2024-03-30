@@ -36,7 +36,17 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // 跨域新增配置
+    proxy: {
+      '/dev-api': { // 匹配所有以 'dev-api' 开头的请求路径
+        target: process.env.VUE_APP_BASE_API,
+        changeOrigin: true, // 支持跨域
+        pathRewrite: { // 从写路径 去掉路径开头的 'dev-api'
+          '^/dev-api': ''
+        }
+      }
+    }
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
