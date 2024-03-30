@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">门诊管理系统</h3>
       </div>
 
       <el-form-item prop="username">
@@ -41,12 +41,12 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
+<!--      <div class="tips">-->
+<!--        <span style="margin-right:20px;">username: admin</span>-->
+<!--        <span> password: any</span>-->
+<!--      </div>-->
 
     </el-form>
   </div>
@@ -54,28 +54,30 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { setCookie, getCookie } from '@/utils/support'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
+      // 进行数据校验
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入正确的用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码长度不能小于6位数'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -94,6 +96,16 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.loginForm.username = getCookie('username')
+    this.loginForm.password = getCookie('password')
+    if (this.loginForm.username === undefined || this.loginForm.username == null || this.loginForm.username === '') {
+      this.loginForm.username = 'admin'
+    }
+    if (this.loginForm.password === undefined || this.loginForm.password == null) {
+      this.loginForm.password = ''
+    }
+  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -110,13 +122,15 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
             this.loading = false
+            setCookie('username', this.loginForm.username, 15)
+            setCookie('password', this.loginForm.password, 15)
+            this.$router.push({ path: '/' })
           }).catch(() => {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          console.log('验证参数不合法!!')
           return false
         }
       })

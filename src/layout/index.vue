@@ -18,9 +18,9 @@ import ResizeMixin from './mixin/ResizeHandler'
 export default {
   name: 'Layout',
   components: {
-    Navbar,
-    Sidebar,
-    AppMain
+    Navbar, // 导航栏
+    Sidebar, // 侧边栏
+    AppMain //
   },
   mixins: [ResizeMixin],
   computed: {

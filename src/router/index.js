@@ -51,10 +51,28 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'el-icon-s-home' }
     }]
   },
-
+  {
+    path: '/staff',
+    component: Layout,
+    redirect: '/staff/list',
+    name: 'Staff',
+    meta: { title: '员工管理', icon: 'table'},
+    children: [
+      {
+        path: 'list',
+        name: 'List',
+        component:() => import('@//views/staff/list.vue'),
+        meta: { title: '员工列表' , icon: ''}
+      },
+      {
+        path: 'create',
+        meta: { title: '员工添加' , icon: ''}
+      }
+    ]
+  },
   {
     path: '/example',
     component: Layout,
